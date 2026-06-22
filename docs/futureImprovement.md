@@ -2,6 +2,14 @@
 
 This document outlines potential improvements and features to implement later.
 
+> **Note on paths / status:** Some snippets below predate the restructure and a
+> few features are already built. Current layout is **`backend/app/...`** (Poetry —
+> add deps with `poetry add`, not `requirements.txt`) and **`apps/web/...`** (not
+> `frontend/`). Already implemented: **lead email notifications**
+> (`backend/app/services/email_service.py`) and the **LLM chat**, which now uses
+> **Anthropic Claude** in `backend/app/services/llm_service.py` (see
+> `docs/LLM_CHAT.md`) — not the OpenAI snippets shown here.
+
 ---
 
 ## 1. Lead Email Notifications

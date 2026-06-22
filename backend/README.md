@@ -9,7 +9,7 @@ FastAPI backend for managing open house listings and lead submissions with Googl
 - ✅ Google Sheets integration for data storage
 - ✅ CORS enabled for frontend access
 - ✅ Input validation with Pydantic
-- ✅ Ready for deployment on Render
+- ✅ Ready for deployment on GCP Cloud Run (or Render)
 
 ## Tech Stack
 
@@ -228,26 +228,25 @@ Submit a lead form.
 }
 ```
 
-## Deployment on Render
+## Deployment
 
-1. Push code to GitHub
-2. Go to [Render Dashboard](https://dashboard.render.com/)
-3. Click "New" > "Web Service"
-4. Connect your GitHub repository
-5. Configure (or just use the included `render.yaml`):
-   - **Name**: seattle-home-advisor-api
-   - **Environment**: Python 3
-   - **Root Directory**: `backend`
-   - **Build Command**: `pip install poetry && poetry install --without dev --no-root`
-   - **Start Command**: `poetry run uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-6. Add Environment Variables:
-   - `GOOGLE_SERVICE_ACCOUNT_JSON`
-   - `GOOGLE_SHEET_ID`
-7. Click "Create Web Service"
-8. Update frontend `.env` with the Render URL:
-   ```
-   NEXT_PUBLIC_API_BASE_URL=https://your-app.onrender.com
-   ```
+Recommended: **GCP Cloud Run** (serverless, scales to zero, runs as the Sheets
+service account — no key file in prod). Full plan, cost breakdown, and
+custom-domain setup are in [`../docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md):
+
+```bash
+cd backend
+gcloud run deploy seattle-home-advisor-api --source . --region us-west1 \
+  --service-account <sheets-sa>@<project>.iam.gserviceaccount.com \
+  --allow-unauthenticated \
+  --set-env-vars GOOGLE_SHEET_ID=<id>,OPEN_HOUSE_TAB=open_house_picks,LEADS_TAB=leads
+```
+
+Alternative: **Render** — Root Directory `backend`, build
+`pip install poetry && poetry install --without dev --no-root`, start
+`poetry run uvicorn app.main:app --host 0.0.0.0 --port $PORT` (or use the included
+`render.yaml`). Either way, point the frontend's `NEXT_PUBLIC_API_BASE_URL` at the
+deployed URL.
 
 ## Troubleshooting
 
@@ -264,7 +263,7 @@ Submit a lead form.
 
 ## Next Steps
 
-- [ ] Add email notifications when leads are submitted
+- [x] Email notifications when leads are submitted (SMTP, optional)
 - [ ] Implement caching for open houses
 - [ ] Add authentication for admin endpoints
 - [ ] Create admin dashboard for managing listings

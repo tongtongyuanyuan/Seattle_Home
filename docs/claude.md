@@ -24,7 +24,7 @@ Backend (later steps):
 
 Deployment:
 - Frontend: Vercel
-- Backend: Render
+- Backend: GCP Cloud Run (see docs/DEPLOYMENT.md)
 
 ---
 
@@ -84,7 +84,7 @@ Do NOT invent fields or data structures beyond what is specified in the implemen
 
 ### Step 6 – Deployment
 - Vercel (frontend)
-- Render (backend)
+- GCP Cloud Run (backend) — see docs/DEPLOYMENT.md
 
 ---
 
