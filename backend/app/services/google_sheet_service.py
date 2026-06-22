@@ -62,7 +62,8 @@ class GoogleSheetService:
         why_pick_1, why_pick_2, why_pick_3, tags, status.
         """
         try:
-            range_name = f"{self.settings.open_house_tab}!A:L"
+            # A:Z leaves room for optional columns (area_note, image_url, ...)
+            range_name = f"{self.settings.open_house_tab}!A:Z"
             result = (
                 self._client()
                 .spreadsheets()

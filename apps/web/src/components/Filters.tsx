@@ -13,45 +13,41 @@ export default function Filters({
   onAreaChange,
   onDayChange,
 }: FiltersProps) {
-  // Cities within 1-1.5h of Seattle Downtown & Bellevue
-  const areas = [
-    'All',
-    // Eastside
-    'Bellevue',
-    'Kirkland',
-    'Redmond',
-    'Bothell',
-    'Woodinville',
-    'Issaquah',
-    'Sammamish',
-    'Newcastle',
-    'Mercer Island',
-    'Factoria',
-    // South
-    'Renton',
-    'Kent',
+  // Cities within ~1–1.5h of Seattle Downtown & Bellevue, sorted A–Z for easy scanning
+  const CITIES = [
     'Auburn',
-    'Federal Way',
-    'Tukwila',
-    'SeaTac',
-    // North
-    'Shoreline',
-    'Lynnwood',
-    'Edmonds',
-    'Mountlake Terrace',
-    'Everett',
-    'Kenmore',
-    // Seattle
-    'Seattle Downtown',
-    'Queen Anne',
-    'Capitol Hill',
     'Ballard',
+    'Bellevue',
+    'Bothell',
+    'Capitol Hill',
+    'Edmonds',
+    'Everett',
+    'Factoria',
+    'Federal Way',
     'Fremont',
+    'Issaquah',
+    'Kenmore',
+    'Kent',
+    'Kirkland',
+    'Lynnwood',
+    'Mercer Island',
+    'Mountlake Terrace',
+    'Newcastle',
+    'North Seattle',
+    'Queen Anne',
+    'Redmond',
+    'Renton',
+    'Sammamish',
+    'SeaTac',
+    'Seattle Downtown',
+    'Shoreline',
+    'South Seattle',
+    'Tukwila',
     'University District',
     'West Seattle',
-    'South Seattle',
-    'North Seattle',
+    'Woodinville',
   ];
+  const areas = ['All', ...[...CITIES].sort((a, b) => a.localeCompare(b))];
   const days = ['All', 'Saturday', 'Sunday'];
 
   return (

@@ -24,6 +24,7 @@ python-multipart = "^0.0.9"
 optional = true
 
 [tool.poetry.group.ai.dependencies]
+anthropic = ">=0.40"
 openai = "^1.50.0"
 
 [tool.poetry.group.dev.dependencies]

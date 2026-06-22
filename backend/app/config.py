@@ -27,7 +27,9 @@ class Settings(BaseSettings):
     open_house_tab: str = "open_house_picks"
     leads_tab: str = "leads"
 
-    # --- LLM / embeddings (optional, graceful fallback) ---
+    # --- LLM chat (Anthropic Claude) + embeddings (OpenAI, optional) ---
+    anthropic_api_key: Optional[str] = None
+    anthropic_model: str = "claude-haiku-4-5"  # cheapest; set to claude-opus-4-8 for max quality
     openai_api_key: Optional[str] = None
     openai_model: str = "gpt-4o-mini"
     embedding_model: str = "text-embedding-3-small"
@@ -49,8 +51,8 @@ class Settings(BaseSettings):
 
     @property
     def ai_enabled(self) -> bool:
-        """True when an OpenAI key is configured (enables embeddings + LLM)."""
-        return bool(self.openai_api_key)
+        """True when an LLM key is set (Anthropic for chat, OpenAI for embeddings)."""
+        return bool(self.anthropic_api_key or self.openai_api_key)
 
     @property
     def notify_recipients(self) -> List[str]:

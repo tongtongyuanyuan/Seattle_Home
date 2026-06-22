@@ -30,6 +30,8 @@ class OpenHouse(BaseModel):
     why_pick_3: Optional[str] = None
     tags: Optional[str] = None
     status: Optional[str] = None
+    # Optional agent-written neighborhood blurb (sheet column `area_note`)
+    area_note: Optional[str] = None
 
 
 class Listing(BaseModel):
@@ -45,6 +47,7 @@ class Listing(BaseModel):
     why_picks: List[str] = []
     tags: List[str] = []
     status: Optional[str] = None
+    area_note: Optional[str] = None  # agent-written blurb from the sheet, if present
     google_maps_url: Optional[str] = None
     map_embed_url: Optional[str] = None
     street_view_url: Optional[str] = None

@@ -56,6 +56,7 @@ def normalize(raw: Dict[str, Any]) -> Listing:
         why_picks=_derive_why_picks(raw),
         tags=_split_tags(raw),
         status=raw.get("status") or None,
+        area_note=(raw.get("area_note") or "").strip() or None,
         google_maps_url=maps_service.google_maps_url(address) if address else None,
         map_embed_url=maps_service.map_embed_url(address) if address else None,
         street_view_url=maps_service.street_view_url(address) if address else None,
