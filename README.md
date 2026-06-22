@@ -16,7 +16,7 @@ seattle-home-picks/
         ├── main.py
         ├── api/routes.py
         ├── models/
-        └── services/   # sheets, normalization, search, embeddings, maps, llm
+        └── services/   # sheets, normalization, search, maps, llm (Claude), area notes
 ```
 
 ## Prerequisites
@@ -67,10 +67,14 @@ npm run dev
 | `GOOGLE_SHEET_ID` | ✅ | Spreadsheet ID from its URL |
 | `GOOGLE_SERVICE_ACCOUNT_FILE` *or* `GOOGLE_SERVICE_ACCOUNT_JSON` | ✅ | Service-account credentials (file path locally, JSON string in prod) |
 | `OPEN_HOUSE_TAB` / `LEADS_TAB` | – | Sheet tab names (default `open_house_picks` / `leads`) |
-| `OPENAI_API_KEY` | optional | Enables semantic search + LLM answers. Also run `poetry install --with ai`. Leave unset to stay free. |
+| `ANTHROPIC_API_KEY` | optional | Enables Claude answers on `/ask` (default `claude-haiku-4-5`, set `ANTHROPIC_MODEL` to change). Also run `poetry install --with ai`. Leave unset to stay free. |
 
 **GCP:** the only API you need enabled is the **Google Sheets API**. Map links are
 generated keyless (no paid Maps/Street View APIs).
+
+**Optional sheet columns** (added automatically when present): `area_note` — your
+own neighborhood blurb per home, used by `/ask` (otherwise a built-in default is
+used); `status` — set `Inactive` to hide a row.
 
 ## Endpoints
 
@@ -81,5 +85,6 @@ generated keyless (no paid Maps/Street View APIs).
 
 ## Deployment
 
-- **Frontend → Vercel** (root directory `apps/web`)
-- **Backend → Render** (see `backend/render.yaml`)
+Low-cost target — **Frontend → Vercel**, **Backend → GCP Cloud Run** (scales to
+zero, ~free at low traffic). Full step-by-step plan, cost breakdown, and custom-
+domain setup in **[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)**.
