@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "seattle-home-advisor-backend"
+version = "0.1.0"
+description = "FastAPI backend for Seattle Home Advisor — team-curated listings, structured + semantic search, and grounded LLM recommendations."
+authors = ["Rachel Xue <tongxue616@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "app" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.115.0"
+uvicorn = { extras = ["standard"], version = "^0.32.0" }
+pydantic = { extras = ["email"], version = "^2.9.0" }
+pydantic-settings = "^2.5.0"
+google-api-python-client = "^2.140.0"
+google-auth = "^2.34.0"
+python-dotenv = "^1.0.1"
+python-multipart = "^0.0.9"
+
+# Optional AI stack. Installed only with `poetry install --with ai`.
+# Embedding + LLM features degrade gracefully to deterministic logic
+# when these are absent or OPENAI_API_KEY is unset.
+[tool.poetry.group.ai]
+optional = true
+
+[tool.poetry.group.ai.dependencies]
+openai = "^1.50.0"
+
+[tool.poetry.group.dev.dependencies]
+httpx = "^0.27.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

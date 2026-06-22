@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Seattle Home Advisor
 
-## Getting Started
+A small, production-minded real estate site for a Seattle agent team. It shows
+**curated team listings** (sourced from a Google Sheet) and helps buyers decide
+*why* each pick is good — with explainable picks, a guided Q&A, and lead capture.
 
-First, run the development server:
+## Structure
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+seattle-home-picks/
+├── apps/
+│   └── web/            # Next.js (App Router) frontend — TypeScript + Tailwind
+└── backend/            # FastAPI backend — Poetry, Google Sheets data source
+    ├── pyproject.toml
+    └── app/
+        ├── main.py
+        ├── api/routes.py
+        ├── models/
+        └── services/   # sheets, normalization, search, embeddings, maps, llm
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Prerequisites
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Node.js** 18+ (frontend)
+- **Python** 3.11+ and **Poetry** (backend) — install Poetry with `pip install poetry`
+- A **Google Cloud service account** with the **Google Sheets API** enabled, and
+  the spreadsheet shared with the service-account email as **Editor**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Run locally
 
-## Learn More
+The app runs as two processes. Open two terminals from the repo root.
 
-To learn more about Next.js, take a look at the following resources:
+**Terminal 1 — backend (FastAPI + Poetry):**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+cd backend
+cp .env.example .env        # first time only — fill in GOOGLE_SHEET_ID + credentials
+poetry install              # first time only — creates the virtualenv + lockfile
+poetry run uvicorn app.main:app --reload
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- API: http://localhost:8000
+- Interactive docs (Swagger): http://localhost:8000/docs
 
-## Deploy on Vercel
+**Terminal 2 — frontend (Next.js):**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+cd apps/web
+npm install                 # first time only
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Site: http://localhost:3000
+- The frontend reads the backend URL from `apps/web/.env.local`
+  (`NEXT_PUBLIC_API_BASE_URL=http://localhost:8000`).
+
+> The backend boots with **zero API keys** — semantic search and the LLM answer
+> fall back to deterministic, rule-based logic (`"ai_enabled": false` on the
+> health check). It only needs Google Sheets credentials to serve real data.
+
+## Configuration
+
+**Backend** (`backend/.env`, see `.env.example`):
+
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `GOOGLE_SHEET_ID` | ✅ | Spreadsheet ID from its URL |
+| `GOOGLE_SERVICE_ACCOUNT_FILE` *or* `GOOGLE_SERVICE_ACCOUNT_JSON` | ✅ | Service-account credentials (file path locally, JSON string in prod) |
+| `OPEN_HOUSE_TAB` / `LEADS_TAB` | – | Sheet tab names (default `open_house_picks` / `leads`) |
+| `OPENAI_API_KEY` | optional | Enables semantic search + LLM answers. Also run `poetry install --with ai`. Leave unset to stay free. |
+
+**GCP:** the only API you need enabled is the **Google Sheets API**. Map links are
+generated keyless (no paid Maps/Street View APIs).
+
+## Endpoints
+
+- `GET /` — health check
+- `GET /open-houses?area=&day=` — team listings (Inactive rows filtered out)
+- `POST /leads` — append a lead to the sheet
+- `POST /ask` — guided Q&A grounded only in team listings
+
+## Deployment
+
+- **Frontend → Vercel** (root directory `apps/web`)
+- **Backend → Render** (see `backend/render.yaml`)

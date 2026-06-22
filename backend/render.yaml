@@ -1,9 +1,12 @@
 services:
   - type: web
-    name: seattle-home-picks-api
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    name: seattle-home-advisor-api
+    runtime: python
+    rootDir: backend
+    # Poetry-based build. AI deps are optional; add `--with ai` once you set
+    # OPENAI_API_KEY and want semantic search + LLM answers in production.
+    buildCommand: pip install poetry && poetry install --without dev --no-root
+    startCommand: poetry run uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: GOOGLE_SHEET_ID
         sync: false
@@ -13,3 +16,6 @@ services:
         value: open_house_picks
       - key: LEADS_TAB
         value: leads
+      # Optional — leave unset to run with deterministic (free) search.
+      - key: OPENAI_API_KEY
+        sync: false

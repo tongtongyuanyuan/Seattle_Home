@@ -85,15 +85,9 @@ created_at | name | email | phone | message | source | listing_id | listing_addr
 cd backend
 ```
 
-2. Create virtual environment:
+2. Install dependencies with Poetry (creates the virtualenv automatically):
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
+poetry install
 ```
 
 4. Create `.env` file:
@@ -119,13 +113,7 @@ PORT=8000
 
 6. Run the development server:
 ```bash
-python main.py
-```
-
-or
-
-```bash
-uvicorn main:app --reload --port 8000
+poetry run uvicorn app.main:app --reload
 ```
 
 The API will be available at: http://localhost:8000
@@ -170,14 +158,24 @@ Once the server is running, visit:
 
 ```
 backend/
-├── main.py                 # FastAPI application and endpoints
-├── services/
-│   ├── __init__.py
-│   └── sheets.py          # Google Sheets integration
-├── requirements.txt        # Python dependencies
-├── .env                   # Environment variables (create from .env.example)
-├── .env.example           # Example environment variables
-└── README.md              # This file
+├── pyproject.toml          # Poetry project + dependencies
+├── poetry.lock             # Locked dependency versions
+├── app/
+│   ├── main.py             # FastAPI app entrypoint + CORS
+│   ├── config.py           # Settings loaded from .env
+│   ├── api/
+│   │   └── routes.py       # /open-houses, /leads, /ask
+│   ├── models/             # Pydantic models (listing, lead, search)
+│   └── services/
+│       ├── google_sheet_service.py    # Sheet ingestion
+│       ├── normalization_service.py   # Raw rows -> Listing
+│       ├── listing_search_service.py  # Structured search
+│       ├── embedding_service.py       # Semantic search (optional)
+│       ├── maps_service.py            # Keyless map links
+│       └── llm_service.py             # LLM answers (optional)
+├── .env                    # Environment variables (create from .env.example)
+├── .env.example            # Example environment variables
+└── README.md               # This file
 ```
 
 ## API Endpoints
@@ -236,11 +234,12 @@ Submit a lead form.
 2. Go to [Render Dashboard](https://dashboard.render.com/)
 3. Click "New" > "Web Service"
 4. Connect your GitHub repository
-5. Configure:
-   - **Name**: seattle-home-picks-api
+5. Configure (or just use the included `render.yaml`):
+   - **Name**: seattle-home-advisor-api
    - **Environment**: Python 3
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+   - **Root Directory**: `backend`
+   - **Build Command**: `pip install poetry && poetry install --without dev --no-root`
+   - **Start Command**: `poetry run uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 6. Add Environment Variables:
    - `GOOGLE_SERVICE_ACCOUNT_JSON`
    - `GOOGLE_SHEET_ID`

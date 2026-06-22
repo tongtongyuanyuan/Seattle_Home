@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Never commit Google service-account keys or other secrets
+*-service-account*.json
+seattle-homes-pickes-*.json
+apps/web/docs/*.json
